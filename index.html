@@ -163,17 +163,19 @@ input:focus{border-color:var(--gold)}
 const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(Math.round(n))+' US$';
 const pct=n=>Number(n).toFixed(1)+'%';
-let mode='mao';\nlet buyCostManual=false;
+let mode='mao';
+let buyCostManual=false;
 
 function values(){
   return {
-    arv: mode==='free'?+$('arvFree').value||0:+$('arv').value||0,
+    arv: mode==='free' ? (+$('arvFree').value||0) : (+$('arv').value||0),
     buy:+$('buy').value||0,
     remodel:+$('remodel').value||0,
     holding:(+$('holding').value||0)*(+$('months').value||0),
     months:+$('months').value||0,
     target:(+$('target').value||0)/100,
-    buyPct:(+$('buyPct').value||0)/100,\n    buyCost:+$('buyCost').value||0,
+    buyPct:(+$('buyPct').value||0)/100,
+    buyCost:+$('buyCost').value||0,
     sellPct:(+$('sellPct').value||0)/100,
     investPct:(+$('investPct').value||0)/100,
     profitPct:(+$('profitPct').value||0)/100
@@ -183,105 +185,132 @@ function values(){
 function calculate(){
   const sqm = +$('sqm').value || 0;
   const costm2 = +$('costm2').value || 0;
-  const remodelAutomatico = sqm * costm2;
-  $('remodel').value = Math.round(remodelAutomatico);
+  const remodel = sqm * costm2;
+  $('remodel').value = Math.round(remodel);
 
-  const v=values();
-  let mao, arv, total, profit, saleCost, buyCost;
-  if(mode==='mao'){
-    // Target return is treated as project return; duration only annualizes the result.
-    const desiredNet=(v.arv*(1-v.sellPct))/(1+v.target);
-    mao=buyCostManual
-      ? desiredNet-v.remodel-v.holding-v.buyCost
-      : (desiredNet-v.remodel-v.holding)/(1+v.buyPct);
-    arv=v.arv;
-  } else if(mode==='arv'){
-    mao=v.buy; buyCost=mao*v.buyPct;
-    total=mao+buyCost+v.remodel+v.holding;
-    arv=(total*(1+v.target))/(1-v.sellPct);
-  } else {
-    mao=v.buy; arv=v.arv;
+  const months = +$('months').value || 0;
+  const holdingMonthly = +$('holding').value || 0;
+  const holding = holdingMonthly * months;
+  const target = (+$('target').value || 0) / 100;
+  const buyPct = (+$('buyPct').value || 0) / 100;
+  const sellPct = (+$('sellPct').value || 0) / 100;
+  const investPct = (+$('investPct').value || 0) / 100;
+  const profitPct = (+$('profitPct').value || 0) / 100;
+
+  let mao = 0, arv = 0, buyCost = 0, saleCost = 0, total = 0, profit = 0;
+
+  if(mode === 'mao'){
+    // En CALCULAR MAO, ambos costos secundarios se calculan sobre el ARV conocido.
+    arv = +$('arv').value || 0;
+    buyCost = arv * buyPct;
+    saleCost = arv * sellPct;
+
+    // ARV - venta - compra - remodelación - tenencia = inversión + rentabilidad.
+    // Despejamos MAO:
+    mao = (arv - saleCost - buyCost - remodel - holding) / (1 + target);
   }
-  buyCost=mao*v.buyPct;
-  saleCost=arv*v.sellPct;
-  total=mao+buyCost+v.remodel+v.holding;
-  profit=arv-saleCost-total;
-  const projectReturn=total?profit/total:0;
-  const annualized=v.months?projectReturn*12/v.months:0;
-  const margin=arv?profit/arv:0;
-  const investCapital=total*v.investPct;
-  const investorGain=profit*v.profitPct;
-  const managerGain=profit*(1-v.profitPct);
-  const roe=investCapital?investorGain/investCapital:0;
-  const simple=arv?(mao+v.remodel)/arv:0;
-  const adjusted=arv?total/arv:0;
+  else if(mode === 'arv'){
+    // En CALCULAR ARV, ambos costos secundarios se calculan sobre el MAO conocido.
+    mao = +$('buy').value || 0;
+    buyCost = mao * buyPct;
+    saleCost = mao * sellPct;
 
-  $('heroValue').textContent=money(mode==='mao'?mao:arv);
-  $('heroCaption').textContent=mode==='mao'?'OFERTA MÁXIMA ADMISIBLE (MAO)':mode==='arv'?'ARV OBJETIVO (VENTA ESTIMADA)':'RENTABILIDAD ANUAL DEL INVERSOR (CALCULADO)';
-  if(mode==='free'){
-    $('heroValue').textContent=pct(annualized);
-    $('heroSub').textContent='Rentabilidad obtenida para el socio basada en tus datos de entrada (Ganancia Bruta: '+money(profit)+').';
-  } else {
-    $('heroSub').textContent=mode==='mao'?'Límite sugerido de adquisición para mantener el '+(v.target*100).toFixed(0)+'% anualizado para el socio.':'Precio de venta necesario para garantizar el retorno del '+(v.target*100).toFixed(0)+'% anual.';
+    // ARV necesario para cubrir inversión + rentabilidad + costo de venta.
+    total = mao + buyCost + remodel + holding;
+    arv = (total * (1 + target)) + saleCost;
+  }
+  else {
+    // En ANÁLISIS LIBRE conocemos ambos:
+    // compra sobre MAO y venta sobre ARV.
+    mao = +$('buy').value || 0;
+    arv = +$('arvFree').value || 0;
+    buyCost = mao * buyPct;
+    saleCost = arv * sellPct;
   }
 
-  $('results').innerHTML=[
-    ['PRECIO ESTIMADO DE VENTA (ARV)',money(arv),false],
-    ['COSTOS DE VENTA ('+(v.sellPct*100).toFixed(0)+'%)',money(saleCost),false],
-    ['MAO (PRECIO DE COMPRA FIJO)',money(mao),false],
-    ['COSTOS DE REMODELACIÓN',money(v.remodel),false],
-    ['GASTOS DE COMPRA ('+(v.buyPct*100).toFixed(1)+'%)',money(buyCost),false],
-    ['GASTOS DE TENENCIA ('+((+$('holding').value||0)).toFixed(1)+'%)',money(v.holding),false],
-    ['INVERSIÓN TOTAL ESTIMADA',money(total),true],
-    ['UTILIDAD BRUTA DEL PROYECTO',money(profit),true]
-  ].map((r,i)=>`<div class="resultrow ${r[2]?'highlight':''}"><span class="name">${r[0]}</span><span class="val">${r[1]}</span></div>`).join('');
+  total = mao + buyCost + remodel + holding;
+  profit = arv - saleCost - total;
 
-  $('returnProject').textContent=pct(projectReturn*100);
-  $('annualized').textContent=pct(annualized*100)+' Anualizado';
-  $('margin').textContent=pct(margin*100);
-  $('investAporte').textContent=(v.investPct*100).toFixed(0)+'%';
-  $('investGain').textContent=money(investorGain);
-  $('managerGain').textContent=money(managerGain);
-  $('capital').textContent=money(investCapital);
-  $('roeTotal').textContent=pct(roe*100);
-  $('investRoe').textContent=pct(roe*100*(12/Math.max(v.months,1)));
-  $('ruleSimple').textContent=pct(simple*100);
-  $('ruleAdjusted').textContent=pct(adjusted*100);
-  $('objective').textContent=projectReturn>=v.target?'OBJETIVO DE '+(v.target*100).toFixed(0)+'% LOGRADO':'POR DEBAJO DEL OBJETIVO '+(v.target*100).toFixed(0)+'%';
-  $('objective').className='badge '+(projectReturn>=v.target?'':'warn');
+  const projectReturn = total ? profit / total : 0;
+  const annualized = months ? projectReturn * 12 / months : 0;
+  const margin = arv ? profit / arv : 0;
+
+  const investCapital = total * investPct;
+  const investorGain = profit * profitPct;
+  const managerGain = profit * (1 - profitPct);
+  const roe = investCapital ? investorGain / investCapital : 0;
+
+  const simple = arv ? (mao + remodel) / arv : 0;
+  const adjusted = arv ? total / arv : 0;
+
+  $('buyCost').value = Math.round(buyCost);
+  $('buyModeLabel').textContent = 'Basado en %';
+
+  $('heroValue').textContent = mode==='mao' ? money(mao) :
+                               mode==='arv' ? money(arv) : pct(annualized*100);
+
+  $('heroCaption').textContent =
+    mode==='mao' ? 'OFERTA MÁXIMA ADMISIBLE (MAO)' :
+    mode==='arv' ? 'ARV OBJETIVO (VENTA ESTIMADA)' :
+    'RENTABILIDAD ANUAL DEL INVERSOR (CALCULADO)';
+
+  $('heroSub').textContent =
+    mode==='mao'
+      ? 'Límite sugerido de adquisición para mantener el '+(target*100).toFixed(0)+'% anualizado para el socio.'
+      : mode==='arv'
+      ? 'Precio de venta necesario para garantizar el retorno del '+(target*100).toFixed(0)+'% anual.'
+      : 'Rentabilidad obtenida para el socio basada en tus datos de entrada (Ganancia Bruta: '+money(profit)+').';
+
+  $('results').innerHTML = [
+    ['PRECIO ESTIMADO DE VENTA (ARV)', money(arv), false],
+    ['COSTOS DE VENTA ('+(sellPct*100).toFixed(0)+'%)', money(saleCost), false],
+    ['MAO (PRECIO DE COMPRA)', money(mao), false],
+    ['COSTOS DE REMODELACIÓN', money(remodel), false],
+    ['GASTOS DE COMPRA ('+(buyPct*100).toFixed(1)+'%)', money(buyCost), false],
+    ['GASTOS DE TENENCIA', money(holding), false],
+    ['INVERSIÓN TOTAL ESTIMADA', money(total), true],
+    ['UTILIDAD BRUTA DEL PROYECTO', money(profit), true]
+  ].map(r=>`<div class="resultrow ${r[2]?'highlight':''}"><span class="name">${r[0]}</span><span class="val">${r[1]}</span></div>`).join('');
+
+  $('returnProject').textContent = pct(projectReturn*100);
+  $('annualized').textContent = pct(annualized*100)+' Anualizado';
+  $('margin').textContent = pct(margin*100);
+
+  $('investAporte').textContent = (investPct*100).toFixed(0)+'%';
+  $('investGain').textContent = money(investorGain);
+  $('managerGain').textContent = money(managerGain);
+  $('capital').textContent = money(investCapital);
+  $('roeTotal').textContent = pct(roe*100);
+  $('investRoe').textContent = pct(roe*100*(12/Math.max(months,1)));
+
+  $('ruleSimple').textContent = pct(simple*100);
+  $('ruleAdjusted').textContent = pct(adjusted*100);
+
+  $('objective').textContent =
+    projectReturn >= target
+      ? 'OBJETIVO DE '+(target*100).toFixed(0)+'% LOGRADO'
+      : 'POR DEBAJO DEL OBJETIVO '+(target*100).toFixed(0)+'%';
+  $('objective').className = 'badge '+(projectReturn>=target?'':'warn');
 }
-
 function switchMode(m){
   mode=m;
   document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
-  $('arvField').classList.toggle('hidden',m==='free'?false:false);
   $('buyField').classList.toggle('hidden',m==='mao');
   $('bothField').classList.toggle('hidden',m!=='free');
-  $('arvField').classList.toggle('hidden',m==='free');
+  $('arvField').classList.toggle('hidden',m==='arv');
   $('noticeTitle').textContent=m==='mao'?'Calcular MAO:':m==='arv'?'Calcular ARV:':'Análisis Libre:';
-  $('noticeText').textContent=m==='mao'?'Calcula el precio máximo de adquisición recomendado (MAO) a partir de tu ARV y costos para lograr tu rentabilidad objetivo.':
-    m==='arv'?'Objetivo: Determina el precio de venta final requerido (ARV) basándote en tu precio de compra real y costos para alcanzar tu meta de rentabilidad.':
-    'Evalúa libremente el proyecto fijando manualmente tanto el precio de compra como el de venta (ARV) para analizar el rendimiento resultante.';
+  $('noticeText').textContent=m==='mao'?'Calcula el precio máximo de adquisición recomendado (MAO) a partir de tu ARV y costos para lograr tu rentabilidad objetivo.':m==='arv'?'Objetivo: Determina el precio de venta final requerido (ARV) basándote en tu precio de compra real y costos para alcanzar tu meta de rentabilidad.':'Evalúa libremente el proyecto fijando manualmente tanto el precio de compra como el de venta (ARV) para analizar el rendimiento resultante.';
   calculate();
 }
+
 document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.mode)));
 document.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>{
-  if(i.id==='buyCost'){
-    buyCostManual=true;
-  }
+  if(i.id==='buyCost') buyCostManual=true;
   calculate();
 }));
-$('buyPct').addEventListener('input',()=>{
-  if(!buyCostManual){
-    calculate();
-  }
-});
-$('buyModeLabel').title='Doble clic para volver al cálculo automático';
+$('buyModeLabel').title='Hacé clic para volver al cálculo porcentual';
 $('buyModeLabel').style.cursor='pointer';
-$('buyModeLabel').addEventListener('dblclick',()=>{
-  buyCostManual=false;
-  calculate();
-});
+$('buyModeLabel').addEventListener('click',()=>{buyCostManual=false;calculate();});
 switchMode('mao');
 </script>
 </body>
