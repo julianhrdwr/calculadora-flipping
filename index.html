@@ -100,7 +100,7 @@ input:focus{border-color:var(--gold)}
         </div>
       </div>
 
-      <div class="field"><label>Inversión de obra / remodelación total</label><div class="currency"><input id="remodel" type="number" value="20000"></div></div>
+      <div class="field"><label>Inversión de obra / remodelación total</label><div class="currency"><input id="remodel" type="number" value="20000" readonly></div></div>
       <div class="field"><label>Gastos de tenencia mensual (deuda, impuestos, mant.)</label><div class="currency"><input id="holding" type="number" value="0"></div></div>
       <div class="two">
         <div class="field"><label>Duración (meses)</label><input id="months" type="number" value="6"></div>
@@ -108,8 +108,8 @@ input:focus{border-color:var(--gold)}
       </div>
 
       <div class="subbox">
-        <div class="subhead">Costos Secundarios <small>Configurable</small></div>
-        <div class="field"><label>Gastos de compra</label><div class="two"><div class="unit" data-unit="%"><input id="buyPct" type="number" value="5"></div><div class="currency"><input id="buyCost" type="number" readonly></div></div></div>
+        <div class="subhead">Costos Secundarios <small id="buyModeLabel">Basado en %</small></div>
+        <div class="field"><label>Gastos de compra</label><div class="two"><div class="unit" data-unit="%"><input id="buyPct" type="number" value="5"></div><div class="currency"><input id="buyCost" type="number"></div></div></div>
         <div class="field"><label>Costos de venta (intermediarios, impuestos, etc)</label><div class="unit" data-unit="%"><input id="sellPct" type="number" value="5"></div></div>
       </div>
 
@@ -163,7 +163,7 @@ input:focus{border-color:var(--gold)}
 const $=id=>document.getElementById(id);
 const money=n=>new Intl.NumberFormat('es-AR',{maximumFractionDigits:0}).format(Math.round(n))+' US$';
 const pct=n=>Number(n).toFixed(1)+'%';
-let mode='mao';
+let mode='mao';\nlet buyCostManual=false;
 
 function values(){
   return {
@@ -173,7 +173,7 @@ function values(){
     holding:(+$('holding').value||0)*(+$('months').value||0),
     months:+$('months').value||0,
     target:(+$('target').value||0)/100,
-    buyPct:(+$('buyPct').value||0)/100,
+    buyPct:(+$('buyPct').value||0)/100,\n    buyCost:+$('buyCost').value||0,
     sellPct:(+$('sellPct').value||0)/100,
     investPct:(+$('investPct').value||0)/100,
     profitPct:(+$('profitPct').value||0)/100
@@ -181,12 +181,19 @@ function values(){
 }
 
 function calculate(){
+  const sqm = +$('sqm').value || 0;
+  const costm2 = +$('costm2').value || 0;
+  const remodelAutomatico = sqm * costm2;
+  $('remodel').value = Math.round(remodelAutomatico);
+
   const v=values();
   let mao, arv, total, profit, saleCost, buyCost;
   if(mode==='mao'){
     // Target return is treated as project return; duration only annualizes the result.
     const desiredNet=(v.arv*(1-v.sellPct))/(1+v.target);
-    mao=(desiredNet-v.remodel-v.holding)/(1+v.buyPct);
+    mao=buyCostManual
+      ? desiredNet-v.remodel-v.holding-v.buyCost
+      : (desiredNet-v.remodel-v.holding)/(1+v.buyPct);
     arv=v.arv;
   } else if(mode==='arv'){
     mao=v.buy; buyCost=mao*v.buyPct;
@@ -258,7 +265,23 @@ function switchMode(m){
   calculate();
 }
 document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.mode)));
-document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calculate));
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',()=>{
+  if(i.id==='buyCost'){
+    buyCostManual=true;
+  }
+  calculate();
+}));
+$('buyPct').addEventListener('input',()=>{
+  if(!buyCostManual){
+    calculate();
+  }
+});
+$('buyModeLabel').title='Doble clic para volver al cálculo automático';
+$('buyModeLabel').style.cursor='pointer';
+$('buyModeLabel').addEventListener('dblclick',()=>{
+  buyCostManual=false;
+  calculate();
+});
 switchMode('mao');
 </script>
 </body>
