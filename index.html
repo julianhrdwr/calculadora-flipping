@@ -68,6 +68,12 @@ input:focus{border-color:var(--gold)}
  .main{grid-template-columns:1fr}.left,.right{padding:20px}
  .modes{grid-template-columns:1fr}.top{padding:12px}
 }
+
+.badge.warn{
+  background:#5b1f2a !important;
+  border-color:#9b3345 !important;
+  color:#ff6b7d !important;
+}
 </style>
 </head>
 <body>
@@ -189,42 +195,45 @@ function calculate(){
   $('remodel').value = Math.round(remodel);
 
   const months = +$('months').value || 0;
-  const holdingMonthly = +$('holding').value || 0;
-  const holding = holdingMonthly * months;
+  const holding = (+$('holding').value || 0) * months;
   const target = (+$('target').value || 0) / 100;
   const buyPct = (+$('buyPct').value || 0) / 100;
   const sellPct = (+$('sellPct').value || 0) / 100;
   const investPct = (+$('investPct').value || 0) / 100;
   const profitPct = (+$('profitPct').value || 0) / 100;
 
-  let mao = 0, arv = 0, buyCost = 0, saleCost = 0, total = 0, profit = 0;
+  let mao=0, arv=0, buyCost=0, saleCost=0, total=0, profit=0;
 
   if(mode === 'mao'){
-    // En CALCULAR MAO, ambos costos secundarios se calculan sobre el ARV conocido.
     arv = +$('arv').value || 0;
-    buyCost = arv * buyPct;
     saleCost = arv * sellPct;
 
-    // ARV - venta - compra - remodelación - tenencia = inversión + rentabilidad.
-    // Despejamos MAO:
-    mao = (arv - saleCost - buyCost - remodel - holding) / (1 + target);
-  }
-  else if(mode === 'arv'){
-    // En CALCULAR ARV, ambos costos secundarios se calculan sobre el MAO conocido.
-    mao = +$('buy').value || 0;
-    buyCost = mao * buyPct;
-    saleCost = mao * sellPct;
+    if(buyCostManual){
+      buyCost = +$('buyCost').value || 0;
+      mao = arv - saleCost - buyCost - remodel - holding;
+    }else{
+      // Compra = % del MAO; venta = % del ARV.
+      // Objetivo de rentabilidad sobre la inversión total.
+      mao = ((arv - saleCost - remodel - holding)
+             - target*(remodel + holding))
+             / ((1 + buyPct) * (1 + target));
+      buyCost = mao * buyPct;
+    }
 
-    // ARV necesario para cubrir inversión + rentabilidad + costo de venta.
+  } else if(mode === 'arv'){
+    mao = +$('buy').value || 0;
+    buyCost = buyCostManual ? (+$('buyCost').value || 0) : mao * buyPct;
+
     total = mao + buyCost + remodel + holding;
-    arv = (total * (1 + target)) + saleCost;
-  }
-  else {
-    // En ANÁLISIS LIBRE conocemos ambos:
-    // compra sobre MAO y venta sobre ARV.
+
+    // Compra = % del MAO; venta = % del ARV.
+    arv = (total * (1 + target)) / (1 - sellPct);
+    saleCost = arv * sellPct;
+
+  } else {
     mao = +$('buy').value || 0;
     arv = +$('arvFree').value || 0;
-    buyCost = mao * buyPct;
+    buyCost = buyCostManual ? (+$('buyCost').value || 0) : mao * buyPct;
     saleCost = arv * sellPct;
   }
 
@@ -234,26 +243,22 @@ function calculate(){
   const projectReturn = total ? profit / total : 0;
   const annualized = months ? projectReturn * 12 / months : 0;
   const margin = arv ? profit / arv : 0;
-
   const investCapital = total * investPct;
   const investorGain = profit * profitPct;
   const managerGain = profit * (1 - profitPct);
   const roe = investCapital ? investorGain / investCapital : 0;
-
   const simple = arv ? (mao + remodel) / arv : 0;
   const adjusted = arv ? total / arv : 0;
 
-  $('buyCost').value = Math.round(buyCost);
-  $('buyModeLabel').textContent = 'Basado en %';
+  if(!buyCostManual) $('buyCost').value = Math.round(buyCost);
+  $('buyModeLabel').textContent = buyCostManual ? 'Modo Manual ($)' : 'Basado en %';
 
   $('heroValue').textContent = mode==='mao' ? money(mao) :
                                mode==='arv' ? money(arv) : pct(annualized*100);
-
   $('heroCaption').textContent =
     mode==='mao' ? 'OFERTA MÁXIMA ADMISIBLE (MAO)' :
     mode==='arv' ? 'ARV OBJETIVO (VENTA ESTIMADA)' :
     'RENTABILIDAD ANUAL DEL INVERSOR (CALCULADO)';
-
   $('heroSub').textContent =
     mode==='mao'
       ? 'Límite sugerido de adquisición para mantener el '+(target*100).toFixed(0)+'% anualizado para el socio.'
@@ -275,22 +280,22 @@ function calculate(){
   $('returnProject').textContent = pct(projectReturn*100);
   $('annualized').textContent = pct(annualized*100)+' Anualizado';
   $('margin').textContent = pct(margin*100);
-
   $('investAporte').textContent = (investPct*100).toFixed(0)+'%';
   $('investGain').textContent = money(investorGain);
   $('managerGain').textContent = money(managerGain);
   $('capital').textContent = money(investCapital);
   $('roeTotal').textContent = pct(roe*100);
   $('investRoe').textContent = pct(roe*100*(12/Math.max(months,1)));
-
   $('ruleSimple').textContent = pct(simple*100);
   $('ruleAdjusted').textContent = pct(adjusted*100);
-
+  const investorAnnualized = months
+    ? (investorGain / Math.max(investCapital, 1)) * 12 / months
+    : 0;
   $('objective').textContent =
-    projectReturn >= target
+    investorAnnualized >= target
       ? 'OBJETIVO DE '+(target*100).toFixed(0)+'% LOGRADO'
       : 'POR DEBAJO DEL OBJETIVO '+(target*100).toFixed(0)+'%';
-  $('objective').className = 'badge '+(projectReturn>=target?'':'warn');
+  $('objective').className = 'badge '+(investorAnnualized>=target?'':'warn');
 }
 function switchMode(m){
   mode=m;
