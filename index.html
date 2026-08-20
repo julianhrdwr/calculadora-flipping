@@ -302,7 +302,7 @@ function switchMode(m){
   document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===m));
   $('buyField').classList.toggle('hidden',m==='mao');
   $('bothField').classList.toggle('hidden',m!=='free');
-  $('arvField').classList.toggle('hidden',m==='arv');
+  $('arvField').classList.toggle('hidden',m==='arv' || m==='free');
   $('noticeTitle').textContent=m==='mao'?'Calcular MAO:':m==='arv'?'Calcular ARV:':'Análisis Libre:';
   $('noticeText').textContent=m==='mao'?'Calcula el precio máximo de adquisición recomendado (MAO) a partir de tu ARV y costos para lograr tu rentabilidad objetivo.':m==='arv'?'Objetivo: Determina el precio de venta final requerido (ARV) basándote en tu precio de compra real y costos para alcanzar tu meta de rentabilidad.':'Evalúa libremente el proyecto fijando manualmente tanto el precio de compra como el de venta (ARV) para analizar el rendimiento resultante.';
   calculate();
