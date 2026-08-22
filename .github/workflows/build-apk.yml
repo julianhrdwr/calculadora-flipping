@@ -33,7 +33,7 @@ jobs:
       - name: Preparar aplicación web
         run: |
           mkdir -p www
-          cp index.html www/index.html
+          cp index-apk.html www/index.html
 
       - name: Crear proyecto Android
         run: |
