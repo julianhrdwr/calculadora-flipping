@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<title>Calculadora de Flipping</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --bg:#29292b;
+  --panel:#111113;
+  --card:#1b1b1e;
+  --input:#0b0b0d;
+  --line:#4a2026;
+  --gold:#e2bd2d;
+  --gold2:#b08b18;
+  --text:#f4f1ea;
+  --muted:#b9b4ad;
+  --blue:#172633;
+  --red:#8d2c3e;
+  --green:#19b77b;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+}
+
+body{
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+button,
+input{
+  font-family:inherit;
+}
+
+.shell{
+  max-width:1500px;
+  margin:auto;
+}
+
+/* =========================
+   PARTE SUPERIOR
+   ========================= */
+
+.top{
+  padding-top:max(28px,env(safe-area-inset-top));
+  padding-right:24px;
+  padding-bottom:18px;
+  padding-left:24px;
+
+  border-bottom:1px solid #5a5a5d;
+  background:#29292b;
+}
+
+.eyebrow{
+  color:var(--gold);
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  text-transform:uppercase;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.7px;
+  margin-bottom:12px;
+}
+
+.gold{
+  color:var(--gold);
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.modes{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.mode{
+  border:1px solid #24191b;
+  border-radius:10px;
+  background:#171719;
+  min-height:74px;
+  color:#eee;
+  cursor:pointer;
+  text-align:center;
+  padding:10px;
+  transition:.15s ease;
+}
+
+.mode.active{
+  background:linear-gradient(#963047,#792b3b);
+  border-color:var(--gold);
+}
+
+.mode .icon{
+  font-size:22px;
+  opacity:.75;
+  margin-bottom:3px;
+}
+
+.mode b{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:13px;
+  font-weight:700;
+}
+
+.mode small{
+  display:block;
+  color:#c9c4c0;
+  margin-top:3px;
+  font-size:12px;
+}
+
+.notice{
+  margin-top:14px;
+  background:#202023;
+  border-radius:9px;
+  padding:12px;
+  color:#eee;
+  line-height:1.4;
+}
+
+.notice span{
+  color:var(--gold);
+  margin-right:8px;
+}
+
+/* =========================
+   CONTENIDO PRINCIPAL
+   ========================= */
+
+.main{
+  display:grid;
+  grid-template-columns:42% 58%;
+  min-height:900px;
+}
+
+.left{
+  padding:26px 34px;
+  background:#29292b;
+}
+
+.right{
+  padding:26px 34px;
+  background:#0d0d0f;
+}
+
+.section-title{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  color:var(--gold);
+  font-size:17px;
+  font-weight:700;
+  border-bottom:1px solid #512027;
+  padding-bottom:14px;
+  margin-bottom:24px;
+}
+
+.section-title:before{
+  content:"";
+  display:inline-block;
+  width:7px;
+  height:15px;
+  background:var(--gold);
+  border-radius:2px;
+  margin-right:10px;
+  vertical-align:-1px;
+}
+
+label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin:0 0 7px;
+  text-transform:uppercase;
+}
+
+.field{
+  margin-bottom:18px;
+}
+
+input{
+  width:100%;
+  height:43px;
+  border:1px solid #381b20;
+  border-radius:9px;
+  background:var(--input);
+  color:#fff;
+  padding:0 12px;
+  font-size:14px;
+  font-weight:500;
+  outline:none;
+}
+
+input:focus{
+  border-color:var(--gold);
+}
+
+.currency{
+  position:relative;
+}
+
+.currency:before{
+  content:"$";
+  position:absolute;
+  left:12px;
+  top:13px;
+  color:#a8a5a0;
+  pointer-events:none;
+}
+
+.currency input{
+  padding-left:27px;
+}
+
+.unit{
+  position:relative;
+}
+
+.unit:after{
+  content:attr(data-unit);
+  position:absolute;
+  right:12px;
+  top:13px;
+  color:#aaa;
+  pointer-events:none;
+}
+
+.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+/* =========================
+   CAJAS SECUNDARIAS
+   ========================= */
+
+.subbox{
+  background:#222225;
+  border:1px solid #3c2529;
+  border-radius:10px;
+  padding:16px;
+  margin:4px 0 18px;
+}
+
+.subhead{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  color:var(--gold);
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:14px;
+}
+
+.subhead small{
+  float:right;
+  color:#fff;
+  background:#4a232a;
+  border:1px solid #8b3b45;
+  border-radius:12px;
+  padding:3px 8px;
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:9px;
+}
+
+/* =========================
+   RESULTADO PRINCIPAL
+   ========================= */
+
+.resultHero{
+  background:var(--blue);
+  border:1px solid #334858;
+  border-radius:13px;
+  text-align:center;
+  padding:27px 15px;
+  margin-bottom:18px;
+}
+
+.resultHero .caption{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  color:var(--gold);
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.6px;
+}
+
+.big{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:39px;
+  font-weight:800;
+  margin:8px 0 4px;
+}
+
+.italic{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-style:italic;
+  font-size:12px;
+}
+
+.resultrow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#1b1b1e;
+  border:1px solid #3b2026;
+  border-radius:9px;
+  padding:14px;
+  margin:8px 0;
+}
+
+.resultrow .name{
+  font-size:12px;
+  font-weight:500;
+}
+
+.resultrow .val{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:16px;
+  font-weight:800;
+}
+
+.highlight{
+  background:var(--blue);
+  border-color:#334858;
+}
+
+/* =========================
+   ESTADÍSTICAS
+   ========================= */
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:18px 0;
+}
+
+.stat{
+  background:#18181a;
+  border:1px solid #3b2026;
+  border-radius:10px;
+  padding:14px;
+}
+
+.stat .k{
+  font-size:10px;
+  color:#bdb7b0;
+}
+
+.stat .v{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:19px;
+  font-weight:800;
+  margin-top:3px;
+}
+
+/* =========================
+   SOCIOS
+   ========================= */
+
+.partner{
+  background:#28282a;
+  border:1px solid #735e1d;
+  border-radius:12px;
+  padding:17px;
+  margin:14px 0;
+}
+
+.partner.manager{
+  border-color:#51252d;
+}
+
+.partner .tag{
+  display:inline-block;
+  font-size:9px;
+  padding:4px 7px;
+  background:#4b272d;
+  color:var(--gold);
+  border-radius:3px;
+}
+
+.partner h3{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  margin:9px 0 15px;
+  font-size:15px;
+  font-weight:700;
+}
+
+.partnerTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:11px;
+}
+
+.gainbox{
+  background:#171719;
+  border-radius:9px;
+  padding:14px;
+  margin-bottom:13px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.gainbox .k{
+  font-size:9px;
+}
+
+.gainbox .v{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:19px;
+  font-weight:800;
+  margin-top:6px;
+}
+
+.green{
+  color:var(--green);
+}
+
+.warn{
+  color:#ff5266;
+}
+
+.badge{
+  display:inline-block;
+  border-radius:10px;
+  padding:4px 8px;
+  font-size:9px;
+  background:#113b2d;
+  color:#28d28d;
+}
+
+.badge.warn{
+  background:#5b1f2a !important;
+  border-color:#9b3345 !important;
+  color:#ff6b7d !important;
+}
+
+/* =========================
+   REGLAS
+   ========================= */
+
+.rules{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:18px;
+}
+
+.rule{
+  background:#18181a;
+  border:1px solid #3b2026;
+  border-radius:10px;
+  padding:14px;
+  text-align:center;
+}
+
+.rule .k{
+  font-size:9px;
+  color:#aaa;
+}
+
+.rule .v{
+  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  color:#fff;
+  font-size:17px;
+  font-weight:700;
+  margin:5px 0;
+}
+
+.hidden{
+  display:none;
+}
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media(max-width:900px){
+
+  .main{
+    grid-template-columns:1fr;
+  }
+
+  .left,
+  .right{
+    padding:22px 20px;
+  }
+
+  .modes{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .mode{
+    min-height:68px;
+    padding:9px;
+  }
+
+  .top{
+    padding-top:max(28px,env(safe-area-inset-top));
+    padding-right:16px;
+    padding-bottom:18px;
+    padding-left:16px;
+  }
+
+}
+
+/* =========================
+   TELÉFONOS
+   ========================= */
+
+@media(max-width:600px){
+
+  body{
+    font-size:14px;
+  }
+
+  .top{
+    padding-top:max(32px,env(safe-area-inset-top));
+    padding-right:16px;
+    padding-bottom:18px;
+    padding-left:16px;
+  }
+
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.6px;
+    margin-bottom:10px;
+  }
+
+  .mode{
+    min-height:66px;
+    border-radius:11px;
+  }
+
+  .mode .icon{
+    font-size:20px;
+  }
+
+  .mode b{
+    font-size:13px;
+  }
+
+  .mode small{
+    font-size:11px;
+  }
+
+  .notice{
+    margin-top:12px;
+    padding:12px;
+    font-size:13px;
+  }
+
+  .left,
+  .right{
+    padding:22px 16px;
+  }
+
+  .section-title{
+    font-size:16px;
+    margin-bottom:20px;
+    padding-bottom:12px;
+  }
+
+  .field{
+    margin-bottom:16px;
+  }
+
+  input{
+    height:45px;
+    font-size:15px;
+  }
+
+  .subbox{
+    padding:14px;
+    margin-bottom:16px;
+  }
+
+  .two{
+    gap:10px;
+  }
+
+  .resultHero{
+    padding:24px 12px;
+    margin-bottom:14px;
+  }
+
+  .big{
+    font-size:34px;
+  }
+
+  .resultrow{
+    padding:13px 12px;
+  }
+
+  .resultrow .name{
+    font-size:11px;
+  }
+
+  .resultrow .val{
+    font-size:15px;
+  }
+
+  .stats{
+    gap:8px;
+    margin:14px 0;
+  }
+
+  .stat{
+    padding:12px;
+  }
+
+  .partner{
+    padding:14px;
+    margin:12px 0;
+  }
+
+  .rules{
+    gap:8px;
+    margin-top:14px;
+  }
+
+  .rule{
+    padding:12px 8px;
+  }
+
+}
+
+/* =========================
+   PANTALLAS MUY PEQUEÑAS
+   ========================= */
+
+@media(max-width:380px){
+
+  .top{
+    padding-top:max(28px,env(safe-area-inset-top));
+  }
+
+  .left,
+  .right{
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+  .big{
+    font-size:30px;
+  }
+
+  .two{
+    grid-template-columns:1fr;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="shell">
+
+  <div class="top">
+
+    <div class="eyebrow">
+      SELECCIONAR MODELO DE SIMULACIÓN
+    </div>
+
+    <div class="modes">
+
+      <button class="mode active" data-mode="mao">
+        <div class="icon">♙</div>
+        <b>CALCULAR MAO</b>
+        <small>Compra segura</small>
+      </button>
+
+      <button class="mode" data-mode="arv">
+        <div class="icon">◎</div>
+        <b>CALCULAR ARV</b>
+        <small>Venta objetivo</small>
+      </button>
+
+      <button class="mode" data-mode="free">
+        <div class="icon">⚙</div>
+        <b>ANÁLISIS LIBRE</b>
+        <small>Simulación manual</small>
+      </button>
+
+    </div>
+
+    <div class="notice">
+      <span>●</span>
+      <strong id="noticeTitle">Calcular MAO:</strong>
+      <span id="noticeText">
+        Calcula el precio máximo de adquisición recomendado (MAO)
+        a partir de tu ARV y costos para lograr tu rentabilidad objetivo.
+      </span>
+    </div>
+
+  </div>
+
+
+  <div class="main">
+
+    <section class="left">
+
+      <div class="section-title">
+        Datos de la Operación
+      </div>
+
+      <div class="field">
+        <label>Dirección de la propiedad (opcional)</label>
+        <input
+          id="address"
+          placeholder="Escribe el nombre y dirección de la propiedad"
+        >
+      </div>
+
+
+      <div class="field" id="arvField">
+        <label>ARV (valor de venta / precio de salida)</label>
+
+        <div class="currency">
+          <input id="arv" type="number" value="140000">
+        </div>
+      </div>
+
+
+      <div class="field hidden" id="buyField">
+        <label>Precio de adquisición (compra / MAO)</label>
+
+        <div class="currency">
+          <input id="buy" type="number" value="125000">
+        </div>
+      </div>
+
+
+      <div class="field hidden" id="bothField">
+        <label>ARV (valor de venta / precio de salida)</label>
+
+        <div class="currency">
+          <input id="arvFree" type="number" value="140000">
+        </div>
+      </div>
+
+
+      <div class="subbox">
+
+        <div class="subhead">
+          CÁLCULO DE REMODELACIÓN
+        </div>
+
+        <div class="two">
+
+          <div class="field">
+            <label>M² propiedad</label>
+
+            <div class="unit" data-unit="m²">
+              <input id="sqm" type="number" value="40">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Costo/m²</label>
+
+            <div class="currency">
+              <input id="costm2" type="number" value="500">
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Inversión de obra / remodelación total
+        </label>
+
+        <div class="currency">
+          <input
+            id="remodel"
+            type="number"
+            value="20000"
+            readonly
+          >
+        </div>
+
+      </div>
+
+
+      <div class="field">
+
+        <label>
+          Gastos de tenencia mensual
+          (deuda, impuestos, mant.)
+        </label>
+
+        <div class="currency">
+          <input id="holding" type="number" value="0">
+        </div>
+
+      </div>
+
+
+      <div class="two">
+
+        <div class="field">
+          <label>Duración (meses)</label>
+          <input id="months" type="number" value="6">
+        </div>
+
+        <div class="field">
+          <label>Rentabilidad anual %</label>
+
+          <div class="unit" data-unit="%">
+            <input id="target" type="number" value="20">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="subbox">
+
+        <div class="subhead">
+
+          Costos Secundarios
+
+          <small id="buyModeLabel">
+            Basado en %
+          </small>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>Gastos de compra</label>
+
+          <div class="two">
+
+            <div class="unit" data-unit="%">
+              <input id="buyPct" type="number" value="5">
+            </div>
+
+            <div class="currency">
+              <input id="buyCost" type="number">
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div class="field">
+
+          <label>
+            Costos de venta
+            (intermediarios, impuestos, etc)
+          </label>
+
+          <div class="unit" data-unit="%">
+            <input id="sellPct" type="number" value="5">
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="subbox">
+
+        <div class="subhead">
+          Socio Inversor y Distribución
+        </div>
+
+        <div class="two">
+
+          <div class="field">
+
+            <label>Inversor aporta (%)</label>
+
+            <div class="unit" data-unit="%">
+              <input id="investPct" type="number" value="100">
+            </div>
+
+          </div>
+
+
+          <div class="field">
+
+            <label>Inversor ganancia (%)</label>
+
+            <div class="unit" data-unit="%">
+              <input id="profitPct" type="number" value="50">
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <section class="right">
+
+      <div class="section-title">
+        Resultados de Viabilidad Financiera
+      </div>
+
+
+      <div class="resultHero">
+
+        <div class="caption" id="heroCaption">
+          OFERTA MÁXIMA ADMISIBLE (MAO)
+        </div>
+
+        <div class="big" id="heroValue">
+          86.508 US$
+        </div>
+
+        <div class="italic" id="heroSub">
+          Límite sugerido de adquisición para mantener
+          el 20% anualizado para el socio.
+        </div>
+
+      </div>
+
+
+      <div id="results"></div>
+
+
+      <div class="stats">
+
+        <div class="stat">
+
+          <div class="k">
+            RETORNO PROYECTO
+          </div>
+
+          <div class="v" id="returnProject">
+            20.0%
+          </div>
+
+          <div class="k" id="annualized">
+            40.0% Anualizado
+          </div>
+
+        </div>
+
+
+        <div class="stat">
+
+          <div class="k">
+            MARGEN NETO/VENTA
+          </div>
+
+          <div class="v" id="margin">
+            15.8%
+          </div>
+
+          <div class="k">
+            Eficiencia de compra
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="partner">
+
+        <div class="partnerTop">
+
+          <span class="tag">
+            SOCIO CAPITALISTA
+          </span>
+
+          <span>
+            Aporte:
+            <b id="investAporte">100%</b>
+          </span>
+
+        </div>
+
+
+        <h3>
+          Inversor (50%)
+        </h3>
+
+
+        <div class="gainbox">
+
+          <div>
+
+            <div class="k">
+              SU GANANCIA
+            </div>
+
+            <div class="v" id="investGain">
+              11.083 US$
+            </div>
+
+          </div>
+
+
+          <div>
+
+            <div class="k">
+              ROE ANUALIZADO
+            </div>
+
+            <div class="v gold" id="investRoe">
+              20.0%
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <div>
+          Capital aportado:
+          <b style="float:right" id="capital">
+            110.833 US$
+          </b>
+        </div>
+
+        <div>
+          Retorno Total sobre Inv. (ROE):
+          <b style="float:right" id="roeTotal">
+            10.0%
+          </b>
+        </div>
+
+
+        <div style="margin-top:10px">
+
+          <span class="badge" id="objective">
+            OBJETIVO DE 20% LOGRADO
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="partner manager">
+
+        <div class="partnerTop">
+
+          <span
+            class="tag"
+            style="background:#111;color:#fff"
+          >
+            SOCIO GESTOR
+          </span>
+
+          <span>
+            Aporte: 0%
+          </span>
+
+        </div>
+
+
+        <h3>
+          Flipping Manager (50%)
+        </h3>
+
+
+        <div class="gainbox">
+
+          <div>
+
+            <div class="k">
+              SU GANANCIA
+            </div>
+
+            <div class="v" id="managerGain">
+              11.083 US$
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="rules">
+
+        <div class="rule">
+
+          <div class="k">
+            REGLA DE COMPRA SIMPLE
+          </div>
+
+          <div class="v" id="ruleSimple">
+            76.1%
+          </div>
+
+          <div class="k">
+            (Compra + Obra) / ARV
+          </div>
+
+        </div>
+
+
+        <div class="rule">
+
+          <div class="k">
+            REGLA DE COMPRA AJUSTADA
+          </div>
+
+          <div class="v" id="ruleAdjusted">
+            79.2%
+          </div>
+
+          <div class="k">
+            Inversión total / ARV
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const $=id=>document.getElementById(id);
+
+const money=n=>
+  new Intl.NumberFormat('es-AR',{
+    maximumFractionDigits:0
+  }).format(Math.round(n))+' US$';
+
+const pct=n=>
+  Number(n).toFixed(1)+'%';
+
+let mode='mao';
+
+let buyCostManual=false;
+
+
+function values(){
+
+  return {
+
+    arv:
+      mode==='free'
+      ? (+$('arvFree').value||0)
+      : (+$('arv').value||0),
+
+    buy:+$('buy').value||0,
+
+    remodel:+$('remodel').value||0,
+
+    holding:
+      (+$('holding').value||0) *
+      (+$('months').value||0),
+
+    months:+$('months').value||0,
+
+    target:
+      (+$('target').value||0)/100,
+
+    buyPct:
+      (+$('buyPct').value||0)/100,
+
+    buyCost:
+      +$('buyCost').value||0,
+
+    sellPct:
+      (+$('sellPct').value||0)/100,
+
+    investPct:
+      (+$('investPct').value||0)/100,
+
+    profitPct:
+      (+$('profitPct').value||0)/100
+
+  };
+
+}
+
+
+function calculate(){
+
+  const sqm=
+    +$('sqm').value||0;
+
+  const costm2=
+    +$('costm2').value||0;
+
+  const remodel=
+    sqm*costm2;
+
+  $('remodel').value=
+    Math.round(remodel);
+
+
+  const months=
+    +$('months').value||0;
+
+  const holding=
+    (+$('holding').value||0)*months;
+
+  const target=
+    (+$('target').value||0)/100;
+
+  const buyPct=
+    (+$('buyPct').value||0)/100;
+
+  const sellPct=
+    (+$('sellPct').value||0)/100;
+
+  const investPct=
+    (+$('investPct').value||0)/100;
+
+  const profitPct=
+    (+$('profitPct').value||0)/100;
+
+
+  let mao=0,
+      arv=0,
+      buyCost=0,
+      saleCost=0,
+      total=0,
+      profit=0;
+
+
+  if(mode === 'mao'){
+
+    arv=
+      +$('arv').value||
