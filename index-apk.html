@@ -2,12 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Calculadora de Flipping</title>
 
 <style>
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root{
@@ -29,21 +27,17 @@
   box-sizing:border-box;
 }
 
-html{
-  margin:0;
-  padding:0;
-  background:var(--bg);
-}
-
-body{
+html,body{
   margin:0;
   padding:0;
   background:var(--bg);
   color:var(--text);
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family:'Inter',Arial,Helvetica,sans-serif;
   font-size:14px;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
+}
+
+body{
+  min-height:100vh;
 }
 
 button,
@@ -56,33 +50,23 @@ input{
   margin:auto;
 }
 
-/* =========================
-   PARTE SUPERIOR
-   ========================= */
-
 .top{
-  padding-top:max(28px,env(safe-area-inset-top));
-  padding-right:24px;
-  padding-bottom:18px;
-  padding-left:24px;
-
+  padding:12px 24px 18px;
   border-bottom:1px solid #5a5a5d;
   background:#29292b;
 }
 
-.eyebrow{
-  color:var(--gold);
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
-  text-transform:uppercase;
-  font-size:13px;
-  font-weight:700;
-  letter-spacing:.7px;
-  margin-bottom:12px;
-}
-
+.eyebrow,
 .gold{
   color:var(--gold);
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.eyebrow{
+  text-transform:uppercase;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.7px;
+  margin-bottom:12px;
 }
 
 .modes{
@@ -100,7 +84,6 @@ input{
   cursor:pointer;
   text-align:center;
   padding:10px;
-  transition:.15s ease;
 }
 
 .mode.active{
@@ -115,7 +98,6 @@ input{
 }
 
 .mode b{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:13px;
   font-weight:700;
 }
@@ -124,7 +106,7 @@ input{
   display:block;
   color:#c9c4c0;
   margin-top:3px;
-  font-size:12px;
+  font-size:11px;
 }
 
 .notice{
@@ -133,17 +115,13 @@ input{
   border-radius:9px;
   padding:12px;
   color:#eee;
-  line-height:1.4;
+  line-height:1.45;
 }
 
 .notice span{
   color:var(--gold);
   margin-right:8px;
 }
-
-/* =========================
-   CONTENIDO PRINCIPAL
-   ========================= */
 
 .main{
   display:grid;
@@ -162,10 +140,9 @@ input{
 }
 
 .section-title{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   color:var(--gold);
   font-size:17px;
-  font-weight:700;
+  font-weight:600;
   border-bottom:1px solid #512027;
   padding-bottom:14px;
   margin-bottom:24px;
@@ -203,7 +180,6 @@ input{
   color:#fff;
   padding:0 12px;
   font-size:14px;
-  font-weight:500;
   outline:none;
 }
 
@@ -221,7 +197,6 @@ input:focus{
   left:12px;
   top:13px;
   color:#a8a5a0;
-  pointer-events:none;
 }
 
 .currency input{
@@ -238,7 +213,6 @@ input:focus{
   right:12px;
   top:13px;
   color:#aaa;
-  pointer-events:none;
 }
 
 .two{
@@ -246,10 +220,6 @@ input:focus{
   grid-template-columns:1fr 1fr;
   gap:12px;
 }
-
-/* =========================
-   CAJAS SECUNDARIAS
-   ========================= */
 
 .subbox{
   background:#222225;
@@ -260,10 +230,9 @@ input:focus{
 }
 
 .subhead{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   color:var(--gold);
   font-size:12px;
-  font-weight:700;
+  font-weight:600;
   margin-bottom:14px;
 }
 
@@ -274,13 +243,9 @@ input:focus{
   border:1px solid #8b3b45;
   border-radius:12px;
   padding:3px 8px;
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family:inherit;
   font-size:9px;
 }
-
-/* =========================
-   RESULTADO PRINCIPAL
-   ========================= */
 
 .resultHero{
   background:var(--blue);
@@ -292,24 +257,21 @@ input:focus{
 }
 
 .resultHero .caption{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   color:var(--gold);
   font-size:12px;
-  font-weight:700;
+  font-weight:600;
   letter-spacing:.6px;
 }
 
 .big{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:39px;
   font-weight:800;
   margin:8px 0 4px;
 }
 
 .italic{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-style:italic;
   font-size:12px;
+  font-style:italic;
 }
 
 .resultrow{
@@ -325,23 +287,17 @@ input:focus{
 
 .resultrow .name{
   font-size:12px;
-  font-weight:500;
 }
 
 .resultrow .val{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:16px;
-  font-weight:800;
+  font-weight:700;
 }
 
 .highlight{
   background:var(--blue);
   border-color:#334858;
 }
-
-/* =========================
-   ESTADÍSTICAS
-   ========================= */
 
 .stats{
   display:grid;
@@ -363,15 +319,10 @@ input:focus{
 }
 
 .stat .v{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:19px;
   font-weight:800;
   margin-top:3px;
 }
-
-/* =========================
-   SOCIOS
-   ========================= */
 
 .partner{
   background:#28282a;
@@ -395,10 +346,8 @@ input:focus{
 }
 
 .partner h3{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   margin:9px 0 15px;
   font-size:15px;
-  font-weight:700;
 }
 
 .partnerTop{
@@ -422,7 +371,6 @@ input:focus{
 }
 
 .gainbox .v{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   font-size:19px;
   font-weight:800;
   margin-top:6px;
@@ -445,16 +393,6 @@ input:focus{
   color:#28d28d;
 }
 
-.badge.warn{
-  background:#5b1f2a !important;
-  border-color:#9b3345 !important;
-  color:#ff6b7d !important;
-}
-
-/* =========================
-   REGLAS
-   ========================= */
-
 .rules{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -476,7 +414,6 @@ input:focus{
 }
 
 .rule .v{
-  font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   color:#fff;
   font-size:17px;
   font-weight:700;
@@ -484,190 +421,339 @@ input:focus{
 }
 
 .hidden{
-  display:none;
+  display:none!important;
 }
 
-/* =========================
-   TABLET
-   ========================= */
+.badge.warn{
+  background:#5b1f2a!important;
+  border-color:#9b3345!important;
+  color:#ff6b7d!important;
+}
+
+
+/* =====================================================
+   CONFIGURACIÓN ESPECIAL PARA APK / CELULAR
+   ===================================================== */
 
 @media(max-width:900px){
 
-  .main{
-    grid-template-columns:1fr;
-  }
-
-  .left,
-  .right{
-    padding:22px 20px;
-  }
-
-  .modes{
-    grid-template-columns:1fr;
-    gap:10px;
-  }
-
-  .mode{
-    min-height:68px;
-    padding:9px;
-  }
-
-  .top{
-    padding-top:max(28px,env(safe-area-inset-top));
-    padding-right:16px;
-    padding-bottom:18px;
-    padding-left:16px;
-  }
-
-}
-
-/* =========================
-   TELÉFONOS
-   ========================= */
-
-@media(max-width:600px){
-
   body{
-    font-size:14px;
+    font-size:13px;
   }
 
   .top{
-    padding-top:max(32px,env(safe-area-inset-top));
-    padding-right:16px;
-    padding-bottom:18px;
-    padding-left:16px;
+    padding:10px 14px 14px;
   }
 
   .eyebrow{
-    font-size:12px;
-    letter-spacing:.6px;
-    margin-bottom:10px;
+    font-size:11px;
+    margin-bottom:9px;
+  }
+
+  /* LOS TRES MODOS EN UNA SOLA FILA */
+  .modes{
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
   }
 
   .mode{
     min-height:66px;
-    border-radius:11px;
+    padding:7px 3px;
+    border-radius:9px;
   }
 
   .mode .icon{
-    font-size:20px;
+    font-size:18px;
+    margin-bottom:1px;
   }
 
   .mode b{
-    font-size:13px;
+    display:block;
+    font-size:10px;
+    line-height:1.15;
   }
 
   .mode small{
-    font-size:11px;
+    font-size:8px;
+    margin-top:3px;
+    white-space:nowrap;
   }
 
   .notice{
-    margin-top:12px;
-    padding:12px;
-    font-size:13px;
+    margin-top:9px;
+    padding:9px 10px;
+    font-size:11px;
+    line-height:1.4;
+  }
+
+  .main{
+    display:block;
+    min-height:0;
   }
 
   .left,
   .right{
-    padding:22px 16px;
+    padding:17px 14px;
   }
 
   .section-title{
-    font-size:16px;
-    margin-bottom:20px;
-    padding-bottom:12px;
+    font-size:15px;
+    padding-bottom:10px;
+    margin-bottom:15px;
+  }
+
+  .section-title:before{
+    width:6px;
+    height:13px;
+    margin-right:8px;
+  }
+
+  /*
+    Convertimos la sección izquierda en una grilla.
+    Esto permite poner los campos uno al lado del otro.
+  */
+  .left{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    column-gap:10px;
+    align-items:start;
+  }
+
+  .left > .section-title{
+    grid-column:1 / -1;
+  }
+
+  /* Dirección ocupa todo el ancho */
+  .left > .field:first-of-type{
+    grid-column:1 / -1;
+  }
+
+  /* Las cajas de costos ocupan todo el ancho */
+  .left > .subbox{
+    grid-column:1 / -1;
   }
 
   .field{
-    margin-bottom:16px;
+    margin-bottom:12px;
+  }
+
+  label{
+    font-size:9px;
+    margin-bottom:5px;
+    line-height:1.2;
   }
 
   input{
-    height:45px;
-    font-size:15px;
+    height:39px;
+    border-radius:8px;
+    padding:0 9px;
+    font-size:13px;
   }
 
-  .subbox{
-    padding:14px;
-    margin-bottom:16px;
+  .currency:before{
+    left:10px;
+    top:11px;
   }
 
-  .two{
-    gap:10px;
+  .currency input{
+    padding-left:24px;
   }
 
-  .resultHero{
-    padding:24px 12px;
-    margin-bottom:14px;
-  }
-
-  .big{
-    font-size:34px;
-  }
-
-  .resultrow{
-    padding:13px 12px;
-  }
-
-  .resultrow .name{
+  .unit:after{
+    right:10px;
+    top:11px;
     font-size:11px;
   }
 
+  /*
+    Los dos campos internos de una caja siguen juntos,
+    pero con menos separación.
+  */
+  .two{
+    gap:8px;
+  }
+
+  .subbox{
+    padding:12px;
+    margin:2px 0 12px;
+    border-radius:9px;
+  }
+
+  .subhead{
+    font-size:10px;
+    margin-bottom:10px;
+  }
+
+  .subhead small{
+    font-size:8px;
+    padding:3px 6px;
+  }
+
+  /*
+    El campo de duración/rentabilidad ocupa las dos columnas,
+    y sus dos hijos quedan lado a lado.
+  */
+  .left > .two{
+    grid-column:1 / -1;
+    margin-bottom:0;
+  }
+
+  /* Resultados */
+  .right{
+    padding-top:15px;
+  }
+
+  .right .section-title{
+    margin-bottom:13px;
+  }
+
+  .resultHero{
+    padding:19px 10px;
+    margin-bottom:12px;
+    border-radius:11px;
+  }
+
+  .resultHero .caption{
+    font-size:10px;
+  }
+
+  .big{
+    font-size:31px;
+    margin:5px 0 3px;
+  }
+
+  .italic{
+    font-size:10px;
+    line-height:1.35;
+  }
+
+  .resultrow{
+    padding:10px 11px;
+    margin:5px 0;
+    border-radius:8px;
+  }
+
+  .resultrow .name{
+    font-size:9px;
+  }
+
   .resultrow .val{
-    font-size:15px;
+    font-size:13px;
   }
 
   .stats{
     gap:8px;
-    margin:14px 0;
+    margin:12px 0;
   }
 
   .stat{
-    padding:12px;
+    padding:11px;
+    border-radius:8px;
+  }
+
+  .stat .k{
+    font-size:8px;
+  }
+
+  .stat .v{
+    font-size:16px;
   }
 
   .partner{
-    padding:14px;
-    margin:12px 0;
+    padding:13px;
+    margin:10px 0;
+    border-radius:10px;
+  }
+
+  .partner h3{
+    font-size:13px;
+    margin:7px 0 11px;
+  }
+
+  .partnerTop{
+    font-size:9px;
+  }
+
+  .gainbox{
+    padding:11px;
+    margin-bottom:10px;
+  }
+
+  .gainbox .k{
+    font-size:8px;
+  }
+
+  .gainbox .v{
+    font-size:16px;
+  }
+
+  .partner{
+    font-size:11px;
+  }
+
+  .badge{
+    font-size:8px;
   }
 
   .rules{
     gap:8px;
-    margin-top:14px;
+    margin-top:12px;
   }
 
   .rule{
-    padding:12px 8px;
+    padding:11px 7px;
+    border-radius:8px;
   }
 
+  .rule .k{
+    font-size:7px;
+  }
+
+  .rule .v{
+    font-size:15px;
+    margin:4px 0;
+  }
 }
 
-/* =========================
-   PANTALLAS MUY PEQUEÑAS
-   ========================= */
 
+/* CELULARES MUY ANGOSTOS */
 @media(max-width:380px){
 
   .top{
-    padding-top:max(28px,env(safe-area-inset-top));
+    padding-left:10px;
+    padding-right:10px;
   }
 
   .left,
   .right{
-    padding-left:12px;
-    padding-right:12px;
+    padding-left:10px;
+    padding-right:10px;
+  }
+
+  .mode{
+    min-height:62px;
+  }
+
+  .mode b{
+    font-size:9px;
+  }
+
+  .mode small{
+    font-size:7px;
+  }
+
+  .notice{
+    font-size:10px;
+  }
+
+  input{
+    font-size:12px;
   }
 
   .big{
-    font-size:30px;
+    font-size:28px;
   }
-
-  .two{
-    grid-template-columns:1fr;
-  }
-
 }
-
 </style>
 </head>
 
@@ -717,24 +803,27 @@ input:focus{
 
   <div class="main">
 
+    <!-- =========================
+         DATOS DE LA OPERACIÓN
+         ========================= -->
+
     <section class="left">
 
       <div class="section-title">
         Datos de la Operación
       </div>
 
+
       <div class="field">
         <label>Dirección de la propiedad (opcional)</label>
         <input
           id="address"
-          placeholder="Escribe el nombre y dirección de la propiedad"
-        >
+          placeholder="Escribe el nombre y dirección de la propiedad">
       </div>
 
 
       <div class="field" id="arvField">
         <label>ARV (valor de venta / precio de salida)</label>
-
         <div class="currency">
           <input id="arv" type="number" value="140000">
         </div>
@@ -743,7 +832,6 @@ input:focus{
 
       <div class="field hidden" id="buyField">
         <label>Precio de adquisición (compra / MAO)</label>
-
         <div class="currency">
           <input id="buy" type="number" value="125000">
         </div>
@@ -752,7 +840,6 @@ input:focus{
 
       <div class="field hidden" id="bothField">
         <label>ARV (valor de venta / precio de salida)</label>
-
         <div class="currency">
           <input id="arvFree" type="number" value="140000">
         </div>
@@ -769,7 +856,6 @@ input:focus{
 
           <div class="field">
             <label>M² propiedad</label>
-
             <div class="unit" data-unit="m²">
               <input id="sqm" type="number" value="40">
             </div>
@@ -777,7 +863,6 @@ input:focus{
 
           <div class="field">
             <label>Costo/m²</label>
-
             <div class="currency">
               <input id="costm2" type="number" value="500">
             </div>
@@ -789,34 +874,18 @@ input:focus{
 
 
       <div class="field">
-
-        <label>
-          Inversión de obra / remodelación total
-        </label>
-
+        <label>Inversión de obra / remodelación total</label>
         <div class="currency">
-          <input
-            id="remodel"
-            type="number"
-            value="20000"
-            readonly
-          >
+          <input id="remodel" type="number" value="20000" readonly>
         </div>
-
       </div>
 
 
       <div class="field">
-
-        <label>
-          Gastos de tenencia mensual
-          (deuda, impuestos, mant.)
-        </label>
-
+        <label>Gastos de tenencia mensual (deuda, impuestos, mant.)</label>
         <div class="currency">
           <input id="holding" type="number" value="0">
         </div>
-
       </div>
 
 
@@ -829,11 +898,9 @@ input:focus{
 
         <div class="field">
           <label>Rentabilidad anual %</label>
-
           <div class="unit" data-unit="%">
             <input id="target" type="number" value="20">
           </div>
-
         </div>
 
       </div>
@@ -842,13 +909,8 @@ input:focus{
       <div class="subbox">
 
         <div class="subhead">
-
           Costos Secundarios
-
-          <small id="buyModeLabel">
-            Basado en %
-          </small>
-
+          <small id="buyModeLabel">Basado en %</small>
         </div>
 
 
@@ -874,8 +936,7 @@ input:focus{
         <div class="field">
 
           <label>
-            Costos de venta
-            (intermediarios, impuestos, etc)
+            Costos de venta (intermediarios, impuestos, etc)
           </label>
 
           <div class="unit" data-unit="%">
@@ -896,24 +957,20 @@ input:focus{
         <div class="two">
 
           <div class="field">
-
             <label>Inversor aporta (%)</label>
 
             <div class="unit" data-unit="%">
               <input id="investPct" type="number" value="100">
             </div>
-
           </div>
 
 
           <div class="field">
-
             <label>Inversor ganancia (%)</label>
 
             <div class="unit" data-unit="%">
               <input id="profitPct" type="number" value="50">
             </div>
-
           </div>
 
         </div>
@@ -922,6 +979,10 @@ input:focus{
 
     </section>
 
+
+    <!-- =========================
+         RESULTADOS
+         ========================= -->
 
     <section class="right">
 
@@ -941,8 +1002,8 @@ input:focus{
         </div>
 
         <div class="italic" id="heroSub">
-          Límite sugerido de adquisición para mantener
-          el 20% anualizado para el socio.
+          Límite sugerido de adquisición para mantener el
+          20% anualizado para el socio.
         </div>
 
       </div>
@@ -954,36 +1015,15 @@ input:focus{
       <div class="stats">
 
         <div class="stat">
-
-          <div class="k">
-            RETORNO PROYECTO
-          </div>
-
-          <div class="v" id="returnProject">
-            20.0%
-          </div>
-
-          <div class="k" id="annualized">
-            40.0% Anualizado
-          </div>
-
+          <div class="k">RETORNO PROYECTO</div>
+          <div class="v" id="returnProject">20.0%</div>
+          <div class="k" id="annualized">40.0% Anualizado</div>
         </div>
 
-
         <div class="stat">
-
-          <div class="k">
-            MARGEN NETO/VENTA
-          </div>
-
-          <div class="v" id="margin">
-            15.8%
-          </div>
-
-          <div class="k">
-            Eficiencia de compra
-          </div>
-
+          <div class="k">MARGEN NETO/VENTA</div>
+          <div class="v" id="margin">15.8%</div>
+          <div class="k">Eficiencia de compra</div>
         </div>
 
       </div>
@@ -1013,28 +1053,17 @@ input:focus{
         <div class="gainbox">
 
           <div>
-
-            <div class="k">
-              SU GANANCIA
-            </div>
-
+            <div class="k">SU GANANCIA</div>
             <div class="v" id="investGain">
               11.083 US$
             </div>
-
           </div>
 
-
           <div>
-
-            <div class="k">
-              ROE ANUALIZADO
-            </div>
-
+            <div class="k">ROE ANUALIZADO</div>
             <div class="v gold" id="investRoe">
               20.0%
             </div>
-
           </div>
 
         </div>
@@ -1047,6 +1076,7 @@ input:focus{
           </b>
         </div>
 
+
         <div>
           Retorno Total sobre Inv. (ROE):
           <b style="float:right" id="roeTotal">
@@ -1056,11 +1086,9 @@ input:focus{
 
 
         <div style="margin-top:10px">
-
           <span class="badge" id="objective">
             OBJETIVO DE 20% LOGRADO
           </span>
-
         </div>
 
       </div>
@@ -1072,8 +1100,7 @@ input:focus{
 
           <span
             class="tag"
-            style="background:#111;color:#fff"
-          >
+            style="background:#111;color:#fff">
             SOCIO GESTOR
           </span>
 
@@ -1092,15 +1119,11 @@ input:focus{
         <div class="gainbox">
 
           <div>
-
-            <div class="k">
-              SU GANANCIA
-            </div>
+            <div class="k">SU GANANCIA</div>
 
             <div class="v" id="managerGain">
               11.083 US$
             </div>
-
           </div>
 
         </div>
@@ -1175,18 +1198,21 @@ function values(){
 
     arv:
       mode==='free'
-      ? (+$('arvFree').value||0)
-      : (+$('arv').value||0),
+        ? (+$('arvFree').value||0)
+        : (+$('arv').value||0),
 
-    buy:+$('buy').value||0,
+    buy:
+      +$('buy').value||0,
 
-    remodel:+$('remodel').value||0,
+    remodel:
+      +$('remodel').value||0,
 
     holding:
-      (+$('holding').value||0) *
+      (+$('holding').value||0)*
       (+$('months').value||0),
 
-    months:+$('months').value||0,
+    months:
+      +$('months').value||0,
 
     target:
       (+$('target').value||0)/100,
@@ -1213,50 +1239,43 @@ function values(){
 
 function calculate(){
 
-  const sqm=
-    +$('sqm').value||0;
+  const sqm =
+    +$('sqm').value || 0;
 
-  const costm2=
-    +$('costm2').value||0;
+  const costm2 =
+    +$('costm2').value || 0;
 
-  const remodel=
-    sqm*costm2;
+  const remodel =
+    sqm * costm2;
 
-  $('remodel').value=
+  $('remodel').value =
     Math.round(remodel);
 
 
-  const months=
-    +$('months').value||0;
+  const months =
+    +$('months').value || 0;
 
-  const holding=
-    (+$('holding').value||0)*months;
+  const holding =
+    (+$('holding').value || 0) *
+    months;
 
-  const target=
-    (+$('target').value||0)/100;
+  const target =
+    (+$('target').value || 0) / 100;
 
-  const buyPct=
-    (+$('buyPct').value||0)/100;
+  const buyPct =
+    (+$('buyPct').value || 0) / 100;
 
-  const sellPct=
-    (+$('sellPct').value||0)/100;
+  const sellPct =
+    (+$('sellPct').value || 0) / 100;
 
-  const investPct=
-    (+$('investPct').value||0)/100;
+  const investPct =
+    (+$('investPct').value || 0) / 100;
 
-  const profitPct=
-    (+$('profitPct').value||0)/100;
-
-
-  let mao=0,
-      arv=0,
-      buyCost=0,
-      saleCost=0,
-      total=0,
-      profit=0;
+  const profitPct =
+    (+$('profitPct').value || 0) / 100;
 
 
-  if(mode === 'mao'){
-
-    arv=
-      +$('arv').value||
+  let mao=0;
+  let arv=0;
+  let buyCost=0;
+  le
